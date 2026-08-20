@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Here are some roses for you</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --card: #fde6ea;
+      --card-edge: #e8a8b4;
+      --card-inner: #f4c4cc;
+      --ink: #5a2436;
+      --ink-soft: #7a3a4c;
+      --line: #c45c72;
+      --sparkle: #ee7a96;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      min-height: 100dvh;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: "Pixelify Sans", system-ui, sans-serif;
+      color: var(--ink);
+      background: #3b1e54;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    .sky {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: #3b1e54 url("assets/bg.png") center / cover no-repeat;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    #hearts {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .floating-heart {
+      position: absolute;
+      height: auto;
+      pointer-events: none;
+      will-change: transform, opacity;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      animation: drift-up var(--life, 3.2s) ease-out forwards;
+      filter: drop-shadow(0 2px 4px rgba(80, 16, 40, 0.35));
+    }
+
+    @keyframes drift-up {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, 0) scale(0.55) rotate(var(--tilt, 0deg));
+      }
+      12% {
+        opacity: 0.95;
+      }
+      70% {
+        opacity: 0.85;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--sway, 0px)), var(--rise, -110px)) scale(1) rotate(var(--tilt-end, 0deg));
+      }
+    }
+
+    .stage {
+      position: relative;
+      z-index: 2;
+      min-height: 100%;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    }
+
+    .card {
+      width: min(460px, 94vw);
+      max-height: min(960px, 94dvh);
+      background: var(--card);
+      border-radius: 36px;
+      border: 3px solid var(--card-edge);
+      box-shadow:
+        inset 0 0 0 4px var(--card-inner),
+        0 18px 50px rgba(42, 10, 36, 0.42);
+      padding: 20px 24px 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: card-in 0.7s ease-out both;
+      overflow: hidden;
+    }
+
+    @keyframes card-in {
+      from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .ornament {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 78%;
+      flex-shrink: 0;
+    }
+
+    .ornament .rule {
+      position: relative;
+      flex: 1;
+      height: 2px;
+      background: var(--line);
+      opacity: 0.85;
+    }
+
+    .ornament .rule::before,
+    .ornament .rule::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 5px;
+      height: 5px;
+      background: var(--line);
+      transform: translateY(-50%) rotate(45deg);
+    }
+
+    .ornament .rule::before { left: 0; }
+    .ornament .rule::after { right: 0; }
+
+    .ornament .tiny-heart {
+      width: 18px;
+      height: auto;
+      image-rendering: pixelated;
+      flex-shrink: 0;
+    }
+
+    .headline {
+      margin: 12px 8px 10px;
+      font-size: clamp(1.05rem, 3.8vw, 1.55rem);
+      font-weight: 600;
+      line-height: 1.35;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-wrap: balance;
+    }
+
+    .sparkle {
+      width: 3px;
+      height: 3px;
+      flex-shrink: 0;
+      background: var(--sparkle);
+      box-shadow:
+        3px 0 0 var(--sparkle),
+        -3px 0 0 var(--sparkle),
+        0 3px 0 var(--sparkle),
+        0 -3px 0 var(--sparkle),
+        6px 0 0 #f4b0c0,
+        -6px 0 0 #f4b0c0,
+        0 6px 0 #f4b0c0,
+        0 -6px 0 #f4b0c0;
+      animation: twinkle 1.8s ease-in-out infinite;
+    }
+
+    .sparkle.delay {
+      animation-delay: 0.9s;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.55; transform: scale(0.85); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+
+    .bouquet-wrap {
+      width: 100%;
+      margin: 6px 0 10px;
+      flex: 1 1 auto;
+      min-height: 0;
+      display: grid;
+      place-items: center;
+    }
+
+    .bouquet {
+      width: min(100%, 380px);
+      max-height: min(54vh, 470px);
+      max-height: min(54dvh, 470px);
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 16px rgba(90, 20, 40, 0.18));
+    }
+
+    .note {
+      margin: 2px 6px 12px;
+      font-size: clamp(0.88rem, 3.2vw, 1.12rem);
+      font-weight: 500;
+      line-height: 1.45;
+      color: var(--ink-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      text-wrap: balance;
+    }
+
+    .note .inline-heart {
+      width: 18px;
+      height: auto;
+      image-rendering: pixelated;
+      transform: translateY(1px);
+    }
+
+    /* Tablets */
+    @media (min-width: 600px) and (max-width: 1024px) {
+      .card {
+        width: min(520px, 86vw);
+        padding: 22px 28px 24px;
+      }
+
+      .bouquet {
+        width: min(100%, 420px);
+        max-height: min(56dvh, 500px);
+      }
+    }
+
+    /* Phones */
+    @media (max-width: 599px) {
+      .card {
+        width: min(460px, 94vw);
+        border-radius: 28px;
+        padding: 14px 14px 16px;
+      }
+
+      .ornament {
+        width: 88%;
+        gap: 6px;
+      }
+
+      .ornament .tiny-heart {
+        width: 15px;
+      }
+
+      .headline {
+        margin: 10px 2px 8px;
+        gap: 8px;
+      }
+
+      .sparkle {
+        transform: scale(0.85);
+      }
+
+      .bouquet {
+        width: min(100%, 320px);
+        max-height: min(48dvh, 360px);
+      }
+
+      .note {
+        margin: 2px 2px 10px;
+      }
+
+      .note .inline-heart {
+        width: 15px;
+      }
+    }
+
+    @media (max-height: 700px) {
+      .card {
+        padding: 12px 16px 14px;
+        border-radius: 28px;
+      }
+
+      .headline {
+        margin: 8px 4px 6px;
+      }
+
+      .bouquet {
+        max-height: 40dvh;
+      }
+
+      .note {
+        margin-bottom: 8px;
+      }
+    }
+
+    @media (max-height: 560px) {
+      .card {
+        max-height: 96dvh;
+        padding: 10px 12px 12px;
+      }
+
+      .ornament {
+        width: 70%;
+      }
+
+      .headline {
+        font-size: 0.95rem;
+        margin: 6px 2px;
+      }
+
+      .bouquet {
+        max-height: 34dvh;
+      }
+
+      .note {
+        font-size: 0.82rem;
+        margin-bottom: 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sky" aria-hidden="true"></div>
+  <div id="hearts" aria-hidden="true"></div>
+
+  <main class="stage">
+    <article class="card">
+      <div class="ornament">
+        <span class="rule"></span>
+        <img class="tiny-heart" src="assets/heart.png" alt="" />
+        <span class="rule"></span>
+      </div>
+
+      <h1 class="headline">
+        <span class="sparkle" aria-hidden="true"></span>
+        Here are some roses for you
+        <span class="sparkle delay" aria-hidden="true"></span>
+      </h1>
+
+      <div class="ornament">
+        <span class="rule"></span>
+        <img class="tiny-heart" src="assets/heart.png" alt="" />
+        <span class="rule"></span>
+      </div>
+
+      <div class="bouquet-wrap">
+        <img class="bouquet" src="assets/flowers.png" alt="A bouquet of red and pink roses wrapped in pink paper with a ribbon" />
+      </div>
+
+      <p class="note">
+        Just a little something to brighten your day
+        <!-- <img class="inline-heart" src="assets/heart.png" alt="" /> -->
+      </p>
+
+      <div class="ornament">
+        <span class="rule"></span>
+        <img class="tiny-heart" src="assets/heart.png" alt="" />
+        <span class="rule"></span>
+      </div>
+    </article>
+  </main>
+
+  <script>
+    const layer = document.getElementById("hearts");
+    const MAX_HEARTS = 26;
+    const SPAWN_MS = 380;
+
+    function rand(min, max) {
+      return min + Math.random() * (max - min);
+    }
+
+    function spawnHeart() {
+      if (layer.childElementCount >= MAX_HEARTS) return;
+
+      const heart = document.createElement("img");
+      heart.src = "assets/heart.png";
+      heart.alt = "";
+      heart.className = "floating-heart";
+
+      const size = rand(22, 48);
+      heart.style.width = size + "px";
+      heart.style.left = rand(4, 96) + "vw";
+      heart.style.top = rand(12, 86) + "vh";
+      heart.style.setProperty("--rise", rand(-70, -140) + "px");
+      heart.style.setProperty("--sway", rand(-28, 28) + "px");
+      heart.style.setProperty("--life", rand(2.4, 4.1) + "s");
+      heart.style.setProperty("--tilt", rand(-18, 18) + "deg");
+      heart.style.setProperty("--tilt-end", rand(-28, 28) + "deg");
+
+      heart.addEventListener("animationend", () => heart.remove());
+      layer.appendChild(heart);
+    }
+
+    for (let i = 0; i < 7; i++) {
+      setTimeout(spawnHeart, i * 90);
+    }
+
+    setInterval(spawnHeart, SPAWN_MS);
+  </script>
+</body>
+</html>
